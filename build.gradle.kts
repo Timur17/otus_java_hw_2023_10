@@ -1,8 +1,11 @@
+import io.spring.gradle.dependencymanagement.dsl.DependencyManagementExtension
 import org.gradle.plugins.ide.idea.model.IdeaLanguageLevel
+import org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
 
 plugins {
     idea
     id("io.spring.dependency-management")
+    id("org.springframework.boot") apply false
     id("name.remal.sonarlint") apply false
     id("com.diffplug.spotless") apply false
 }
@@ -31,7 +34,20 @@ allprojects {
     apply(plugin = "io.spring.dependency-management")
     dependencyManagement {
         dependencies {
+            imports {
+                mavenBom(BOM_COORDINATES)
+            }
             dependency("com.google.guava:guava:$guava")
+        }
+    }
+    configurations.all {
+        resolutionStrategy {
+            failOnVersionConflict()
+            force("org.sonarsource.sslr:sslr-core:1.24.0.633")
+            force("com.google.code.findbugs:jsr305:3.0.2")
+            force("org.eclipse.platform:org.eclipse.osgi:3.18.400")
+            force("org.eclipse.platform:org.eclipse.equinox.common:3.18.0")
+
         }
     }
 }
@@ -53,6 +69,18 @@ subprojects {
     configure<com.diffplug.gradle.spotless.SpotlessExtension> {
         java {
             palantirJavaFormat("2.38.0")
+        }
+    }
+}
+
+tasks {
+    val managedVersions by registering {
+        doLast {
+            project.extensions.getByType<DependencyManagementExtension>()
+                    .managedVersions
+                    .toSortedMap()
+                    .map { "${it.key}:${it.value}" }
+                    .forEach(::println)
         }
     }
 }
