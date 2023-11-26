@@ -16,4 +16,6 @@ pluginManagement {
     }
 }
 include("hw01-gradle")
+include("hw02")
 include("hw04-generics")
+include("hw06-annotations")
