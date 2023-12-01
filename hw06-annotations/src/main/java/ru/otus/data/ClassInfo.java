@@ -1,13 +1,12 @@
 package ru.otus.data;
 
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
-
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 @Data
 @RequiredArgsConstructor

@@ -34,6 +34,7 @@ public class LifeCycleTest {
         logger.info("Executing firstTest. Hash code LifeCycleTest - '{}'", this.hashCode());
     }
 
+    @SuppressWarnings("java:S112")
     @Test
     public void secondTest() {
         logger.info("Executing secondTest. Hash code LifeCycleTest - '{}'", this.hashCode());

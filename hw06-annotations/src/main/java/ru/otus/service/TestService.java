@@ -1,20 +1,21 @@
 package ru.otus.service;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.otus.data.ClassInfo;
 import ru.otus.test.LifeCycleTest;
 import ru.otus.test.annotations.*;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.Map;
-
 public class TestService {
     private static final Logger logger = LoggerFactory.getLogger(TestService.class);
 
-    private void run(ClassInfo classInfo) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    @SuppressWarnings("java:S1144")
+    private void run(ClassInfo classInfo)
+            throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         paresMethodsAnnotations(classInfo);
         executeTestMethods(classInfo);
         printResult(classInfo.getResult());
@@ -41,8 +42,11 @@ public class TestService {
         logger.info("-------------Amount tests-------------");
         logger.info("Class '{}' has: ", classInfo.getClazz().getName());
         logger.info("- '{}' Test Methods ", classInfo.getTestMethods().size());
-        logger.info("- '{}' BeforeEach Methods ", classInfo.getBeforeEachMethods().size());
-        logger.info("- '{}' AfterEachMethods Methods ", classInfo.getAfterEachMethods().size());
+        logger.info(
+                "- '{}' BeforeEach Methods ", classInfo.getBeforeEachMethods().size());
+        logger.info(
+                "- '{}' AfterEachMethods Methods ",
+                classInfo.getAfterEachMethods().size());
         logger.info("- '{}' BeforeAll Methods ", classInfo.getBeforeAllMethods().size());
         logger.info("- '{}' AfterAll Methods ", classInfo.getAfterAllMethods().size());
     }
@@ -59,8 +63,8 @@ public class TestService {
         }
 
         for (Method testMethod : classInfo.getTestMethods()) {
-            LifeCycleTest lifeCycleTest =
-                    (LifeCycleTest) classInfo.getClazz().getDeclaredConstructor().newInstance();
+            LifeCycleTest lifeCycleTest = (LifeCycleTest)
+                    classInfo.getClazz().getDeclaredConstructor().newInstance();
             try {
                 executeListMethods(classInfo.getBeforeEachMethods(), lifeCycleTest);
                 testMethod.invoke(lifeCycleTest);
