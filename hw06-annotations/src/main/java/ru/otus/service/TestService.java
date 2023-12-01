@@ -1,98 +1,91 @@
 package ru.otus.service;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.otus.data.ClassInfo;
 import ru.otus.test.LifeCycleTest;
 import ru.otus.test.annotations.*;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Map;
+
 public class TestService {
     private static final Logger logger = LoggerFactory.getLogger(TestService.class);
-    private final List<Method> testMethods = new ArrayList<>();
-    private final List<Method> beforeEachMethods = new ArrayList<>();
-    private final List<Method> afterEachMethods = new ArrayList<>();
 
-    private final List<Method> beforeAllMethods = new ArrayList<>();
-    private final List<Method> afterAllMethods = new ArrayList<>();
-
-    private final Class<?> clazz;
-
-    private final Map<String, String> result = new HashMap<>();
-
-    public TestService(Class<?> clazz) {
-        this.clazz = clazz;
+    private void run(ClassInfo classInfo) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+        paresMethodsAnnotations(classInfo);
+        executeTestMethods(classInfo);
+        printResult(classInfo.getResult());
     }
 
-    public void paresMethodsAnnotations() {
-        Method[] methods = clazz.getDeclaredMethods();
+    private void paresMethodsAnnotations(ClassInfo classInfo) {
+
+        Method[] methods = classInfo.getClazz().getDeclaredMethods();
 
         for (Method method : methods) {
             if (method.isAnnotationPresent(Test.class)) {
-                testMethods.add(method);
-                result.put(method.getName(), "FAILED");
+                classInfo.getTestMethods().add(method);
+                classInfo.getResult().put(method.getName(), "FAILED");
             } else if (method.isAnnotationPresent(BeforeEach.class)) {
-                beforeEachMethods.add(method);
+                classInfo.getBeforeEachMethods().add(method);
             } else if (method.isAnnotationPresent(AfterEach.class)) {
-                afterEachMethods.add(method);
+                classInfo.getAfterEachMethods().add(method);
             } else if (method.isAnnotationPresent(BeforeAll.class)) {
-                beforeAllMethods.add(method);
+                classInfo.getBeforeAllMethods().add(method);
             } else if (method.isAnnotationPresent(AfterAll.class)) {
-                afterAllMethods.add(method);
+                classInfo.getAfterAllMethods().add(method);
             }
         }
         logger.info("-------------Amount tests-------------");
-        logger.info("Class '{}' has: ", clazz.getName());
-        logger.info("- '{}' Test Methods ", testMethods.size());
-        logger.info("- '{}' BeforeEach Methods ", beforeEachMethods.size());
-        logger.info("- '{}' AfterEachMethods Methods ", afterEachMethods.size());
-        logger.info("- '{}' BeforeAll Methods ", beforeAllMethods.size());
-        logger.info("- '{}' AfterAll Methods ", afterAllMethods.size());
+        logger.info("Class '{}' has: ", classInfo.getClazz().getName());
+        logger.info("- '{}' Test Methods ", classInfo.getTestMethods().size());
+        logger.info("- '{}' BeforeEach Methods ", classInfo.getBeforeEachMethods().size());
+        logger.info("- '{}' AfterEachMethods Methods ", classInfo.getAfterEachMethods().size());
+        logger.info("- '{}' BeforeAll Methods ", classInfo.getBeforeAllMethods().size());
+        logger.info("- '{}' AfterAll Methods ", classInfo.getAfterAllMethods().size());
     }
 
-    public void executeTestMethods()
+    private void executeTestMethods(ClassInfo classInfo)
             throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         logger.info("-------------Tests started-------------");
 
         boolean resultStaticTests;
-        resultStaticTests = executeStaticMethods(beforeAllMethods);
+        resultStaticTests = executeStaticMethods(classInfo.getBeforeAllMethods());
         if (!resultStaticTests) {
-            ignoreTest();
+            ignoreTest(classInfo.getResult(), classInfo.getTestMethods());
             return;
         }
 
-        for (Method testMethod : testMethods) {
+        for (Method testMethod : classInfo.getTestMethods()) {
             LifeCycleTest lifeCycleTest =
-                    (LifeCycleTest) clazz.getDeclaredConstructor().newInstance();
+                    (LifeCycleTest) classInfo.getClazz().getDeclaredConstructor().newInstance();
             try {
-                executeListMethods(beforeEachMethods, lifeCycleTest);
+                executeListMethods(classInfo.getBeforeEachMethods(), lifeCycleTest);
                 testMethod.invoke(lifeCycleTest);
-                executeListMethods(afterEachMethods, lifeCycleTest);
-                result.put(testMethod.getName(), "SUCCESS");
+                executeListMethods(classInfo.getAfterEachMethods(), lifeCycleTest);
+                classInfo.getResult().put(testMethod.getName(), "SUCCESS");
             } catch (Exception e) {
                 logger.error("Exception happened during executing method '{}'", testMethod.getName());
             }
         }
 
-        resultStaticTests = executeStaticMethods(afterAllMethods);
+        resultStaticTests = executeStaticMethods(classInfo.getAfterAllMethods());
         if (!resultStaticTests) {
-            ignoreTest();
+            ignoreTest(classInfo.getResult(), classInfo.getTestMethods());
         }
     }
 
-    public void printResult() {
+    private void printResult(Map<String, String> result) {
         logger.info("-------------Print result-------------");
         for (Map.Entry<String, String> entry : result.entrySet()) {
             logger.info("Test '{}' is '{}'", entry.getKey(), entry.getValue());
         }
     }
 
-    private void ignoreTest() {
-        for (Method testMethod : testMethods) {
+    private void ignoreTest(Map<String, String> result, List<Method> methods) {
+        for (Method testMethod : methods) {
             result.put(testMethod.getName(), "IGNORED");
         }
     }

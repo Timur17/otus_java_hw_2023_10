@@ -1,6 +1,7 @@
 dependencies {
     implementation ("ch.qos.logback:logback-classic")
-    testImplementation(platform("org.junit:junit-bom"))
+    compileOnly("org.projectlombok:lombok")
+    annotationProcessor("org.projectlombok:lombok")
     testImplementation("org.junit.jupiter:junit-jupiter")
 }
 
