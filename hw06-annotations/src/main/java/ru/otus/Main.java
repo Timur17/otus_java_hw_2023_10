@@ -6,7 +6,6 @@ import java.lang.reflect.Method;
 import java.util.Scanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.otus.data.ClassInfo;
 import ru.otus.service.TestService;
 
 public class Main {
@@ -31,11 +30,9 @@ public class Main {
         Constructor<?> constructor = TestService.class.getDeclaredConstructor();
         constructor.setAccessible(true);
 
-        ClassInfo classInfo = new ClassInfo(clazz);
-
         TestService testService = (TestService) constructor.newInstance();
-        Method methodRun = testService.getClass().getDeclaredMethod("run", ClassInfo.class);
+        Method methodRun = testService.getClass().getDeclaredMethod("run", Class.class);
         methodRun.setAccessible(true);
-        methodRun.invoke(testService, classInfo);
+        methodRun.invoke(testService, clazz);
     }
 }
