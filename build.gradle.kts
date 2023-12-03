@@ -30,6 +30,7 @@ allprojects {
     }
 
     val guava: String by project
+    val lombok: String by project
 
     apply(plugin = "io.spring.dependency-management")
     dependencyManagement {
@@ -38,6 +39,7 @@ allprojects {
                 mavenBom(BOM_COORDINATES)
             }
             dependency("com.google.guava:guava:$guava")
+            dependency("org.projectlombok:lombok:$lombok")
         }
     }
     configurations.all {
