@@ -1,0 +1,147 @@
+    Экстремум.
+G1 экстремум достигнут при Xms1792m Xmx1792m
+
+    Выводы.
+Если нам важна скорость работы и доступность и неважно потребление памяти, то выбираем G1
+Если нам важно наименьше потребление CPU и неважна доступность, то выбираем Serial
+Если нам важно наименьшее потребление памяти, а также нужна доступность лучшее чем в Serial и неважно CPU, время работы, то выбираем Parallel
+
+
+
+    Результаты (В таблице очень криво получились у меня, так что оставил в таком виде)
+
+                                            До оптимизации
+
+        Статистика со сборщиком - G1
+
+- Xms2048m Xmx2048m
+    spend msec:8982, sec:8
+    spend msec:8997, sec:8
+    spend msec:8977, sec:8
+- Xms1792m Xmx1792m
+    spend msec:8477, sec:8
+    spend msec:8404, sec:8
+    spend msec:8486, sec:8
+    spend msec:8509, sec:8
+- Xms1536m Xmx1536m
+    spend msec:9055, sec:9
+    spend msec:9067, sec:9
+    spend msec:9054, sec:9
+    spend msec:9175, sec:9
+    spend msec:8994, sec:8
+- Xms1280m Xmx1280m
+    spend msec:9172, sec:9
+    spend msec:9175, sec:9
+    spend msec:9103, sec:9
+- Xms1080m Xmx1080m
+    spend msec:9238, sec:9
+    spend msec:9271, sec:9
+    spend msec:9269, sec:9
+- Xms1024m Xmx1024m
+    spend msec:9168, sec:9
+    spend msec:9135, sec:9
+    spend msec:9075, sec:9
+- Xms768m Xmx768m
+    spend msec:9594, sec:9
+    spend msec:9664, sec:9
+    spend msec:9676, sec:9
+- Xms512m Xmx512m
+    spend msec:10040, sec:10
+    spend msec:10055, sec:10
+    spend msec:10262, sec:10
+- Xms256m Xmx256m
+    spend msec:13781, sec:13
+    spend msec:14209, sec:14
+    spend msec:14171, sec:14
+
+
+        Статистика со сборщиком - Parallel
+
+- Xms2048m Xmx2048m
+    spend msec:30444, sec:30
+- Xms1792m Xmx1792m
+    spend msec:31554, sec:31
+- Xms1080m Xmx1080m
+    spend msec:39244, sec:39
+- Xms1024m Xmx1024m
+    spend msec:40029, sec:40
+- Xms512m Xmx512m
+    spend msec:50498, sec:50
+- Xms256m Xmx256m
+    OutOfMemoryError
+
+        Статистика со сборщиком - Serial
+
+- Xms2048m Xmx2048m
+    spend msec:9355, sec:9
+    spend msec:9322, sec:9
+- Xms1792m Xmx1792m
+    spend msec:10018, sec:10
+    spend msec:9906, sec:9
+- Xms1080m Xmx1080m
+    spend msec:12032, sec:12
+- Xms1024m Xmx1024m
+    spend msec:11911, sec:11
+- Xms512m Xmx512m
+    spend msec:16761, sec:16
+- Xms256m Xmx256m
+    OutOfMemoryError
+
+
+                На примере Xms2048m Xmx2048m (переменную counter увеличил до 1_000_000_000 чтобы лучше увидеть разницу)
+- G1.
+    spend msec:84269, sec:84
+    среднее потребление 21% CPU,
+    Меньше всего GC activity - 1%.
+    Потребляет больше всего памяти до 1750мб.
+    Работает быстрей всех
+    spend msec:84269, sec:84
+- Parallel.
+    потребляет больше всего CPU ~60%
+    GC activity ~5%.
+    меньше всего памяти до 1200мб.
+    Работает дольше всех.
+    spend msec:314675, sec:314
+- Serial.
+    потребляет меньше всего CPU ~6.5%,
+    среднее потребление GC activity ~ 3.5%.
+    Среднее потребление Памяти до 1500мб.
+    Время работы среднее
+    spend msec:90665, sec:90
+
+
+                                            После оптимизации
+Статистика со сборщиком - G1
+- Xms2048m Xmx2048m
+    spend msec:1785, sec:1
+    spend msec:1761, sec:1
+    spend msec:1756, sec:1
+- Xms1792m Xmx1792m
+    spend msec:1847, sec:1
+    spend msec:1860, sec:1
+    spend msec:1836, sec:1
+- Xms1536m Xmx1536m
+    spend msec:1878, sec:1
+    spend msec:1854, sec:1
+    spend msec:1845, sec:1
+- Xms1280m Xmx1280m
+    spend msec:1825, sec:1
+    spend msec:1810, sec:1
+    spend msec:1797, sec:1
+- Xms1080m Xmx1080m
+    spend msec:1713, sec:1
+    spend msec:1728, sec:1
+    spend msec:1692, sec:1
+- Xms1024m Xmx1024m
+    spend msec:1706, sec:1
+    spend msec:1700, sec:1
+    spend msec:1698, sec:1
+- Xms768m Xmx768m
+    spend msec:1693, sec:1
+    spend msec:1617, sec:1
+- Xms512m Xmx512m
+    spend msec:1602, sec:1
+    spend msec:1561, sec:1
+- Xms256m Xmx256m
+    spend msec:2302, sec:2
+    spend msec:2395, sec:2
