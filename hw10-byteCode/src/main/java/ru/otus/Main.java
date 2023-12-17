@@ -5,6 +5,7 @@ public class Main {
         TestLoggingInterface testLoggingInterface = Ioc.createMyClass();
         testLoggingInterface.calculation(6);
         testLoggingInterface.calculation(6, 7);
+        testLoggingInterface.calcul(6, 7);
         testLoggingInterface.calculation(6, 7, "TestString");
     }
 }

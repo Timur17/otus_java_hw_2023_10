@@ -14,11 +14,18 @@ public class TestLogging implements TestLoggingInterface {
         logger.info("Executing inside method calculation with: int param");
     }
 
+    @Log
     @Override
     public void calculation(int param1, int param2) {
         logger.info("Executing inside method calculation with: int param1, int param2");
     }
 
+    @Override
+    public void calcul(int param1, int param2) {
+        logger.info("Executing inside method calcul with: int param1, int param2");
+    }
+
+    @Log
     @Override
     public void calculation(int param1, int param2, String param3) {
         logger.info("Executing inside method calculation with: int param1, int param2, String param3");
