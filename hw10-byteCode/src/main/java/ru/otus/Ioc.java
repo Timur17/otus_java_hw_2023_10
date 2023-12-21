@@ -2,16 +2,12 @@ package ru.otus;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
 import java.lang.reflect.Proxy;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.otus.annotation.Log;
-import ru.otus.entity.MethodEntity;
 
 public class Ioc {
     private static final Logger logger = LoggerFactory.getLogger(Ioc.class);
@@ -26,7 +22,7 @@ public class Ioc {
 
     static class DemoInvocationHandler implements InvocationHandler {
         private final TestLoggingInterface myClass;
-        private final Map<MethodEntity, Method> methodsStore;
+        private final Set<Method> methodsStore;
 
         DemoInvocationHandler(TestLoggingInterface testLoggingInterface) {
             this.myClass = testLoggingInterface;
@@ -35,39 +31,37 @@ public class Ioc {
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            Class<?>[] clazz = getMethodParams(method);
-            MethodEntity methodEntity = new MethodEntity(method.getName(), clazz);
-            Method m = methodsStore.get(methodEntity);
-            if (m.isAnnotationPresent(Log.class)) {
-                logger.info("Proxy for method: '{}', param: '{}'", m.getName(), args);
+            if (methodsStore.contains(method)) {
+                logger.info("Proxy for method: '{}', param: '{}'", method.getName(), args);
             }
             return method.invoke(myClass, args);
         }
 
-        private Map<MethodEntity, Method> analyzeMethodsInClass() {
-            final Map<MethodEntity, Method> methodsStore = new HashMap<>();
-            Method[] methods = myClass.getClass().getMethods();
+        private Set<Method> analyzeMethodsInClass() {
+            Set<Method> methodsStore = new HashSet<>();
+            Method[] methods = myClass.getClass().getDeclaredMethods();
             for (Method method : methods) {
-                Class<?>[] clazz = getMethodParams(method);
-                Method findedMethod;
-                try {
-                    findedMethod = myClass.getClass().getDeclaredMethod(method.getName(), clazz);
-                    MethodEntity methodEntity = new MethodEntity(method.getName(), clazz);
-                    methodsStore.put(methodEntity, findedMethod);
-                } catch (NoSuchMethodException e) {
-                    logger.trace("Method not found: '{}'", method.getName());
+                if (method.isAnnotationPresent(Log.class)) {
+                    Method findedMethod = findMethodInInterface(method);
+                    methodsStore.add(findedMethod);
                 }
             }
             return methodsStore;
         }
 
-        private Class<?>[] getMethodParams(Method method) {
-            Parameter[] parameters = method.getParameters();
-            List<?> parameterList =
-                    Arrays.stream(parameters).map(Parameter::getType).toList();
-            Class<?>[] clazz = new Class<?>[parameterList.size()];
-            parameterList.toArray(clazz);
-            return clazz;
+        private Method findMethodInInterface(Method method) {
+            String methodName = method.getName();
+            Class<?>[] clazz = method.getParameterTypes();
+            try {
+                for (Class<?> inter : myClass.getClass().getInterfaces()) {
+                    return inter.getMethod(methodName, clazz);
+                }
+            } catch (NoSuchMethodException | SecurityException e) {
+                logger.error("Method not found: '{}'", method.getName());
+            }
+            logger.error(
+                    "Class:'{}' does not has interface.", myClass.getClass().getName());
+            return null;
         }
 
         @Override
