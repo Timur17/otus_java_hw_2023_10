@@ -1,15 +1,9 @@
 package ru.otus.cell;
 
-import lombok.Data;
-import ru.otus.Denomination;
+public interface Cell {
+    int getBalance();
 
-@Data
-public class Cell {
-    private final Denomination denomination;
-    private int amount;
+    int getMoney(int amount);
 
-    public int getBalance(){
-        return amount * denomination.getValue();
-    }
-
+    void putMoney(int amountToAdd);
 }
