@@ -1,15 +1,15 @@
 package ru.otus;
 
-import lombok.Data;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import ru.otus.model.Cell;
-import ru.otus.model.Denomination;
-import ru.otus.service.CalculateService;
-
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import lombok.Data;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import ru.otus.exception.MyOwnRuntimeException;
+import ru.otus.model.Cell;
+import ru.otus.model.Denomination;
+import ru.otus.service.CalculateService;
 
 @Data
 public class Atm {
@@ -26,8 +26,8 @@ public class Atm {
         this.calculateService = calculateService;
     }
 
-    public static Atm getInstance(Set<Cell> cells, CalculateService calculateService){
-        if (instance == null){
+    public static Atm getInstance(Set<Cell> cells, CalculateService calculateService) {
+        if (instance == null) {
             return new Atm(cells, calculateService);
         }
         return instance;
@@ -49,15 +49,17 @@ public class Atm {
     public void putMoney(Map<Denomination, Integer> map) {
 
         for (Map.Entry<Denomination, Integer> entry : map.entrySet()) {
-            logger.info("Trying add amount money: '{}' to cell with denomination: '{}'",
-                    entry.getValue(), entry.getKey());
+            logger.info(
+                    "Trying add amount money: '{}' to cell with denomination: '{}'", entry.getValue(), entry.getKey());
             Optional<Cell> optional = findCell(entry.getKey());
 
-            optional.ifPresentOrElse(cell -> {
-                logger.info("Balance before add '{}', ", cell.showBalance());
-                calculateService.putMoney(cell, entry.getValue());
-                logger.info("Balance after add '{}'", cell.showBalance());
-            }, () -> logger.error("Unknown denomination  '{}'", entry.getKey()));
+            optional.ifPresentOrElse(
+                    cell -> {
+                        logger.info("Balance before add '{}', ", cell.showBalance());
+                        calculateService.putMoney(cell, entry.getValue());
+                        logger.info("Balance after add '{}'", cell.showBalance());
+                    },
+                    () -> logger.error("Unknown denomination  '{}'", entry.getKey()));
         }
     }
 
@@ -66,7 +68,7 @@ public class Atm {
         if (showBalance() >= amount) {
             calculateService.getMoney(cells, amount);
         } else {
-            throw new RuntimeException("Atm has not enough money. Atm balance: '{}', showBalance()");
+            throw new MyOwnRuntimeException("Atm has not enough money. Atm balance: '{}', showBalance()");
         }
     }
 }

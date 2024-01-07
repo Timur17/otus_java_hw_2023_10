@@ -1,8 +1,7 @@
 package ru.otus.service;
 
-import ru.otus.model.Cell;
-
 import java.util.Set;
+import ru.otus.model.Cell;
 
 public interface CalculateService {
 
