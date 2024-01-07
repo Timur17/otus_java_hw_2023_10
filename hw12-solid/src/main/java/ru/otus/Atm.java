@@ -3,7 +3,9 @@ package ru.otus;
 import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.otus.cell.CellImpl;
+import ru.otus.model.Cell;
+import ru.otus.model.Denomination;
+import ru.otus.service.CalculateService;
 
 import java.util.Map;
 import java.util.Optional;
@@ -13,14 +15,26 @@ import java.util.Set;
 public class Atm {
     private static final Logger logger = LoggerFactory.getLogger(Atm.class);
 
-    private final Set<CellImpl> cell;
+    private final Set<Cell> cells;
 
-    public Atm(Set<CellImpl> cell) {
-        this.cell = cell;
+    private final CalculateService calculateService;
+
+    private static Atm instance = null;
+
+    private Atm(Set<Cell> cells, CalculateService calculateService) {
+        this.cells = cells;
+        this.calculateService = calculateService;
     }
 
-    public Optional<CellImpl> findCell(Denomination denomination) {
-        for (CellImpl cellImpl : cell) {
+    public static Atm getInstance(Set<Cell> cells, CalculateService calculateService){
+        if (instance == null){
+            return new Atm(cells, calculateService);
+        }
+        return instance;
+    }
+
+    private Optional<Cell> findCell(Denomination denomination) {
+        for (Cell cellImpl : cells) {
             if (cellImpl.getDenomination().equals(denomination)) {
                 return Optional.of(cellImpl);
             }
@@ -28,48 +42,29 @@ public class Atm {
         return Optional.empty();
     }
 
+    public int showBalance() {
+        return cells.stream().mapToInt(Cell::showBalance).sum();
+    }
+
     public void putMoney(Map<Denomination, Integer> map) {
 
         for (Map.Entry<Denomination, Integer> entry : map.entrySet()) {
             logger.info("Trying add amount money: '{}' to cell with denomination: '{}'",
                     entry.getValue(), entry.getKey());
-            Optional<CellImpl> optinalCell = findCell(entry.getKey());
+            Optional<Cell> optional = findCell(entry.getKey());
 
-            optinalCell.ifPresentOrElse(cell -> {
-                logger.info("Balance before add '{}', ", cell.getBalance());
-                cell.putMoney(entry.getValue());
-                logger.info("Balance after add '{}'", cell.getBalance());
+            optional.ifPresentOrElse(cell -> {
+                logger.info("Balance before add '{}', ", cell.showBalance());
+                calculateService.putMoney(cell, entry.getValue());
+                logger.info("Balance after add '{}'", cell.showBalance());
             }, () -> logger.error("Unknown denomination  '{}'", entry.getKey()));
         }
-    }
-
-    public int showBalance() {
-        return cell.stream().mapToInt(CellImpl::getBalance).sum();
     }
 
     public void getMoney(int amount) {
         logger.info("Attempt to withdraw money: '{}'", amount);
         if (showBalance() >= amount) {
-            for (CellImpl cellImpl : cell) {
-                logger.info("Atm has '{}' denomination '{}'", cellImpl.getAmount(), cellImpl.getDenomination());
-                logger.info("Remains to withdraw money: '{}'", amount);
-                amount = cellImpl.getMoney(amount);
-//                logger.info("Atm has '{}' denomination '{}'", cell.getAmount(), cell.getDenomination());
-//                logger.info("Remains to withdraw money: '{}'", amount);
-//                if (cell.getDenomination().getValue() <= amount && cell.getBalance() > 0) {
-//                    int neededAmount = amount / cell.getDenomination().getValue();
-//                    if (cell.getAmount() >= neededAmount) {
-//                        int sumToWithdraw = neededAmount * cell.getDenomination().getValue();
-//                        logger.info("Sum '{}' will be withdrawn by denomination '{}'", sumToWithdraw, cell.getDenomination());
-//                        amount = amount - sumToWithdraw;
-//                        cell.setAmount(cell.getAmount() - neededAmount);
-//                    } else {
-//                        logger.info("Sum '{}' will be withdrawn by denomination '{}'", cell.getBalance(), cell.getDenomination());
-//                        amount = amount - cell.getBalance();
-//                        cell.setAmount(0);
-//                    }
-//                }
-            }
+            calculateService.getMoney(cells, amount);
         } else {
             throw new RuntimeException("Atm has not enough money. Atm balance: '{}', showBalance()");
         }
