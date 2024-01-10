@@ -22,7 +22,7 @@ class AtmTest {
         cells = new TreeSet<>((o1, o2) ->
                 o2.getDenomination().getValue() - o1.getDenomination().getValue());
         expected.forEach(denomination -> cells.add(new Cell(denomination)));
-        atm = Atm.getInstance(cells, new CalculateServiceImp());
+        atm = new Atm(cells, new CalculateServiceImp());
     }
 
     @Test

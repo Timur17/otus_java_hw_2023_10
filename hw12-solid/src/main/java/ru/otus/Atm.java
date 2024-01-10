@@ -21,27 +21,10 @@ public class Atm {
 
     private static Atm instance = null;
 
-    private Atm(Set<Cell> cells, CalculateService calculateService) {
+    public Atm(Set<Cell> cells, CalculateService calculateService) {
         this.cells = cells;
         this.calculateService = calculateService;
     }
-
-    public static Atm getInstance(Set<Cell> cells, CalculateService calculateService) {
-        if (instance == null) {
-            return new Atm(cells, calculateService);
-        }
-        return instance;
-    }
-
-    private Optional<Cell> findCell(Denomination denomination) {
-        for (Cell cellImpl : cells) {
-            if (cellImpl.getDenomination().equals(denomination)) {
-                return Optional.of(cellImpl);
-            }
-        }
-        return Optional.empty();
-    }
-
     public int showBalance() {
         return cells.stream().mapToInt(Cell::showBalance).sum();
     }
@@ -71,4 +54,14 @@ public class Atm {
             throw new MyOwnRuntimeException("Atm has not enough money. Atm balance: '{}', showBalance()");
         }
     }
+
+    private Optional<Cell> findCell(Denomination denomination) {
+        for (Cell cellImpl : cells) {
+            if (cellImpl.getDenomination().equals(denomination)) {
+                return Optional.of(cellImpl);
+            }
+        }
+        return Optional.empty();
+    }
+
 }
