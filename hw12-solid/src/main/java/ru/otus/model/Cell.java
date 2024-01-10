@@ -4,10 +4,10 @@ import lombok.Data;
 
 @Data
 public class Cell {
-    private final Denomination denomination;
+    private final int denomination;
     private int amount;
 
     public int showBalance() {
-        return amount * denomination.getValue();
+        return amount * denomination;
     }
 }
