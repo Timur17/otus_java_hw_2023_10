@@ -5,19 +5,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.otus.model.Cell;
 
-public class CalculateServiceImp implements CalculateService {
+public class WithdrawMoneyServiceImpl implements WithdrawMoneyService {
 
-    private static final Logger logger = LoggerFactory.getLogger(CalculateServiceImp.class);
+    private static final Logger logger = LoggerFactory.getLogger(WithdrawMoneyServiceImpl.class);
 
     @Override
     public void getMoney(Set<Cell> cells, int amount) {
         for (Cell cell : cells) {
             logger.info("Atm has '{}' denomination '{}'", cell.getAmount(), cell.getDenomination());
             logger.info("Remains to withdraw money: '{}'", amount);
-            if (cell.getDenomination().getValue() <= amount && cell.showBalance() > 0) {
-                int neededAmount = amount / cell.getDenomination().getValue();
+            if (cell.getDenomination() <= amount && cell.showBalance() > 0) {
+                int neededAmount = amount / cell.getDenomination();
                 if (cell.getAmount() >= neededAmount) {
-                    int sumToWithdraw = neededAmount * cell.getDenomination().getValue();
+                    int sumToWithdraw = neededAmount * cell.getDenomination();
                     logger.info(
                             "Sum '{}' will be withdrawn by denomination '{}'", sumToWithdraw, cell.getDenomination());
                     amount = amount - sumToWithdraw;
@@ -32,10 +32,5 @@ public class CalculateServiceImp implements CalculateService {
                 }
             }
         }
-    }
-
-    @Override
-    public void putMoney(Cell cell, int amountToAdd) {
-        cell.setAmount(cell.getAmount() + amountToAdd);
     }
 }
