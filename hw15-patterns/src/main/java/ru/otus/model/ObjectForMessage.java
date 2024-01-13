@@ -13,9 +13,18 @@ public class ObjectForMessage {
         this.data = data;
     }
 
-    public ObjectForMessage deepCopy() {
+    public static ObjectForMessage deepCopy(ObjectForMessage src) {
+        if (src == null) {
+            return null;
+        }
+
         ObjectForMessage objectForMessage = new ObjectForMessage();
-        objectForMessage.setData(List.copyOf(data));
+
+        if (src.getData() == null) {
+            return objectForMessage;
+        }
+
+        objectForMessage.setData(List.copyOf(src.getData()));
         return objectForMessage;
     }
 }

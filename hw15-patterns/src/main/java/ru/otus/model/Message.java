@@ -140,7 +140,7 @@ public class Message {
                 field10,
                 field11,
                 field12,
-                field13.deepCopy());
+                ObjectForMessage.deepCopy(field13));
     }
 
     @Override
