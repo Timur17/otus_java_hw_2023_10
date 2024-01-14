@@ -23,6 +23,8 @@ class ProcessorTest {
     void processingTest(@TempDir Path tempDir) throws IOException {
         System.out.println(tempDir);
 
+        String defaultCharacterEncoding = System.getProperty("file.encoding");
+
         // given
         var inputDataFileName = "inputData.json";
         var outputDataFileName = "outputData.json";
