@@ -1,9 +1,11 @@
 package ru.otus.model;
 
 import java.util.Set;
-import lombok.Data;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-@Data
+@RequiredArgsConstructor
+@Getter
 public class Atm {
     private final Set<Cell> cells;
 }

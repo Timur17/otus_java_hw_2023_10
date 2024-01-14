@@ -21,14 +21,14 @@ public class WithdrawMoneyServiceImpl implements WithdrawMoneyService {
                     logger.info(
                             "Sum '{}' will be withdrawn by denomination '{}'", sumToWithdraw, cell.getDenomination());
                     amount = amount - sumToWithdraw;
-                    cell.setAmount(cell.getAmount() - neededAmount);
+                    cell.reduceAmount(neededAmount);
                 } else {
                     logger.info(
                             "Sum '{}' will be withdrawn by denomination '{}'",
                             cell.showBalance(),
                             cell.getDenomination());
                     amount = amount - cell.showBalance();
-                    cell.setAmount(0);
+                    cell.setAmountZero();
                 }
             }
         }

@@ -36,7 +36,7 @@ public class AtmServiceImpl implements AtmService {
             optional.ifPresentOrElse(
                     cell -> {
                         logger.info("Balance before add '{}', ", cell.showBalance());
-                        cell.setAmount(cell.getAmount() + entry.getValue());
+                        cell.increaseAmount(entry.getValue());
                         logger.info("Balance after add '{}'", cell.showBalance());
                     },
                     () -> logger.error("Unknown denomination  '{}'", entry.getKey()));

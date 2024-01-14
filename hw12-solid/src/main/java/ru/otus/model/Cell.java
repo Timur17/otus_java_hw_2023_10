@@ -1,14 +1,28 @@
 package ru.otus.model;
 
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.Setter;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-@Data
+@RequiredArgsConstructor
+@Getter
 public class Cell {
     private final int denomination;
-    @Setter(AccessLevel.NONE)
     private int amount;
+
+    public int increaseAmount(int value) {
+        amount = amount + value;
+        return amount;
+    }
+
+    public int reduceAmount(int value) {
+        amount = amount - value;
+        return amount;
+    }
+
+    public int setAmountZero() {
+        amount = 0;
+        return 0;
+    }
 
     public int showBalance() {
         return amount * denomination;
