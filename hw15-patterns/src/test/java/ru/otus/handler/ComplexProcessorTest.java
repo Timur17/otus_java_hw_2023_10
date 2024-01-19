@@ -135,9 +135,12 @@ class ComplexProcessorTest {
         assertThat(result).isEqualTo(message);
 
         ProcessorEvenError proc = (ProcessorEvenError) processor1;
-        if (proc.getSeconds() % 2 == 0) {
+
+        if (proc.isEvenSecond()) {
+            System.out.println("OK: " + proc.getSeconds());
             assertThat(proc.getRuntimeException()).isNotNull();
         } else {
+            System.out.println("KO: " + proc.getSeconds());
             assertThat(proc.getRuntimeException()).isNull();
         }
     }

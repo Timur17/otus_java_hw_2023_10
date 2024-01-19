@@ -1,26 +1,19 @@
 package ru.otus.listener.homework;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import ru.otus.listener.Listener;
 import ru.otus.model.Message;
 
 public class HistoryListener implements Listener, HistoryReader {
-    private List<Message> messageList = new ArrayList<>();
+    private final Map<Long, Message> messageMap = new HashMap<>();
 
     @Override
     public void onUpdated(Message msg) {
-        messageList.add(msg.copy());
+        messageMap.put(msg.getId(), msg.copy());
     }
 
     @Override
     public Optional<Message> findMessageById(long id) {
-        for (Message msg : messageList) {
-            if (msg.getId() == id) {
-                return Optional.of(msg);
-            }
-        }
-        return Optional.empty();
+        return Optional.of(messageMap.get(id));
     }
 }
