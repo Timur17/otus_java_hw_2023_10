@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -124,7 +125,7 @@ class ComplexProcessorTest {
     void handleProcessorThrowExceptionTest() {
         var message = new Message.Builder(1L).field11("field7").build();
 
-        Processor processor1 = new ProcessorEvenError();
+        Processor processor1 = new ProcessorEvenError(LocalDateTime::now);
 
         var processors = List.of(processor1);
 
