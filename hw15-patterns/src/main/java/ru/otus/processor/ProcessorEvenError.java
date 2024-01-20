@@ -6,8 +6,6 @@ import ru.otus.processor.homework.DateTimeProvider;
 public class ProcessorEvenError implements Processor {
     private RuntimeException runtimeException;
 
-    private int second;
-
     private final DateTimeProvider dateTimeProvider;
 
     public ProcessorEvenError(DateTimeProvider dateTimeProvider) {
@@ -16,20 +14,12 @@ public class ProcessorEvenError implements Processor {
 
     @Override
     public Message process(Message message) {
-        second = dateTimeProvider.getDate().getSecond();
-        if (isEvenSecond()) {
+        dateTimeProvider.memorizeSecond();
+        if (dateTimeProvider.isEvenSecond()) {
             runtimeException = new RuntimeException("Exception was thrown cause method was invoked in even second");
             throw runtimeException;
         }
         return message;
-    }
-
-    public int getSeconds() {
-        return second;
-    }
-
-    public boolean isEvenSecond() {
-        return second % 2 == 0;
     }
 
     public RuntimeException getRuntimeException() {

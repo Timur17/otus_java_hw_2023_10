@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.*;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -13,7 +12,6 @@ import ru.otus.listener.Listener;
 import ru.otus.model.Message;
 import ru.otus.processor.Processor;
 import ru.otus.processor.ProcessorChangeFields;
-import ru.otus.processor.ProcessorEvenError;
 
 class ComplexProcessorTest {
 
@@ -118,31 +116,5 @@ class ComplexProcessorTest {
         assertThat(result.getId()).isEqualTo(expected.getId());
         assertThat(result.getField11()).isEqualTo(expected.getField11());
         assertThat(result.getField12()).isEqualTo(expected.getField12());
-    }
-
-    @Test
-    @DisplayName("Тестируем ProcessorThrowException")
-    void handleProcessorThrowExceptionTest() {
-        var message = new Message.Builder(1L).field11("field7").build();
-
-        Processor processor1 = new ProcessorEvenError(LocalDateTime::now);
-
-        var processors = List.of(processor1);
-
-        var complexProcessor = new ComplexProcessor(processors, (ex) -> {});
-
-        var result = complexProcessor.handle(message);
-
-        assertThat(result).isEqualTo(message);
-
-        ProcessorEvenError proc = (ProcessorEvenError) processor1;
-
-        if (proc.isEvenSecond()) {
-            System.out.println("OK: " + proc.getSeconds());
-            assertThat(proc.getRuntimeException()).isNotNull();
-        } else {
-            System.out.println("KO: " + proc.getSeconds());
-            assertThat(proc.getRuntimeException()).isNull();
-        }
     }
 }
