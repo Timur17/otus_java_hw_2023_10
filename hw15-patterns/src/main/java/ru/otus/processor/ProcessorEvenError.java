@@ -14,8 +14,7 @@ public class ProcessorEvenError implements Processor {
 
     @Override
     public Message process(Message message) {
-        dateTimeProvider.memorizeSecond();
-        if (dateTimeProvider.isEvenSecond()) {
+        if (dateTimeProvider.getDate().getSecond() % 2 == 0) {
             runtimeException = new RuntimeException("Exception was thrown cause method was invoked in even second");
             throw runtimeException;
         }

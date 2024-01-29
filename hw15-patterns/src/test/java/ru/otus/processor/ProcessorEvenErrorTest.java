@@ -29,12 +29,9 @@ class ProcessorEvenErrorTest {
         assertThat(result).isEqualTo(message);
 
         ProcessorEvenError proc = (ProcessorEvenError) processor1;
-
-        if (dateTimeProvider.isEvenSecond()) {
-            System.out.println("OK: " + dateTimeProvider.getSecond());
+        if ((dateTimeProvider.getDate().getSecond() % 2) == 0) {
             assertThat(proc.getRuntimeException()).isNotNull();
         } else {
-            System.out.println("KO: " + dateTimeProvider.getSecond());
             assertThat(proc.getRuntimeException()).isNull();
         }
     }

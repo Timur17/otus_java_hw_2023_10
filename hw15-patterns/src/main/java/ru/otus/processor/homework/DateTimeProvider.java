@@ -1,7 +1,8 @@
 package ru.otus.processor.homework;
 
-public interface DateTimeProvider {
-    void memorizeSecond();
+import java.time.LocalDateTime;
 
-    boolean isEvenSecond();
+public interface DateTimeProvider {
+
+    LocalDateTime getDate();
 }
