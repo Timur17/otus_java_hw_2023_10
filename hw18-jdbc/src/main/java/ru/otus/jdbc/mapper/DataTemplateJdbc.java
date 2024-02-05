@@ -20,6 +20,7 @@ import ru.otus.core.repository.executor.DbExecutor;
 @SuppressWarnings({"java:S1068", "java:S3011"})
 public class DataTemplateJdbc<T> implements DataTemplate<T> {
 
+    private EntityClassMetaDataImpl<T> entityClassMetaData;
     private final DbExecutor dbExecutor;
     private final EntitySQLMetaData entitySQLMetaData;
 
@@ -93,7 +94,7 @@ public class DataTemplateJdbc<T> implements DataTemplate<T> {
                 f.setAccessible(true);
                 params.add(f.get(client));
             } catch (NoSuchFieldException | IllegalAccessException e) {
-                throw new RuntimeException(e);
+                throw new DataTemplateException(e);
             }
         }
         return params;
@@ -101,13 +102,16 @@ public class DataTemplateJdbc<T> implements DataTemplate<T> {
 
     @SuppressWarnings("unchecked")
     private EntityClassMetaData<T> getObjMetaData() {
-        try {
-            Field field = entitySQLMetaData.getClass().getDeclaredField("entityClassMetaData");
-            field.setAccessible(true);
-            return (EntityClassMetaDataImpl<T>) field.get(entitySQLMetaData);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+        if (entityClassMetaData == null) {
+            try {
+                Field field = entitySQLMetaData.getClass().getDeclaredField("entityClassMetaData");
+                field.setAccessible(true);
+                entityClassMetaData = (EntityClassMetaDataImpl<T>) field.get(entitySQLMetaData);
+                return entityClassMetaData;
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                throw new DataTemplateException(e);
+            }
+        } else return entityClassMetaData;
     }
 
     private void setObjFields(EntityClassMetaData<T> metaData, T obj, ResultSet rs) {
