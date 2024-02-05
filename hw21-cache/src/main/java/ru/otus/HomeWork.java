@@ -5,6 +5,8 @@ import javax.sql.DataSource;
 import org.flywaydb.core.Flyway;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.otus.cachehw.HwCache;
+import ru.otus.cachehw.MyCache;
 import ru.otus.core.repository.executor.DbExecutorImpl;
 import ru.otus.core.sessionmanager.TransactionRunnerJdbc;
 import ru.otus.crm.datasource.DriverManagerDataSource;
@@ -32,18 +34,27 @@ public class HomeWork {
         // Работа с клиентом
         EntityClassMetaData<Client> entityClassMetaDataClient = new EntityClassMetaDataImpl<>(Client.class);
         EntitySQLMetaData entitySQLMetaDataClient = new EntitySQLMetaDataImpl(entityClassMetaDataClient);
+        HwCache<Long, Client> cacheClient = new MyCache<>();
         var dataTemplateClient = new DataTemplateJdbc<Client>(
-                dbExecutor, entitySQLMetaDataClient); // реализация DataTemplate, универсальная
+                cacheClient, dbExecutor, entitySQLMetaDataClient); // реализация DataTemplate, универсальная
 
         // Код дальше должен остаться
         var dbServiceClient = new DbServiceClientImpl(transactionRunner, dataTemplateClient);
         dbServiceClient.saveClient(new Client("dbServiceFirst"));
 
         var clientSecond = dbServiceClient.saveClient(new Client("dbServiceSecond"));
+
+        long start = System.currentTimeMillis();
         var clientSecondSelected = dbServiceClient
                 .getClient(clientSecond.getId())
                 .orElseThrow(() -> new RuntimeException("Client not found, id:" + clientSecond.getId()));
-        log.info("clientSecondSelected:{}", clientSecondSelected);
+        log.info("clientSecondSelected:{} for: {} ", clientSecondSelected, System.currentTimeMillis() - start);
+
+        start = System.currentTimeMillis();
+        var clientSecondSelected2 = dbServiceClient
+                .getClient(clientSecond.getId())
+                .orElseThrow(() -> new RuntimeException("Client not found, id:" + clientSecond.getId()));
+        log.info("clientSecondSelected:{} for: {} ", clientSecondSelected2, System.currentTimeMillis() - start);
 
         List<Client> clients = dbServiceClient.findAll();
         log.info("clients:{}", clients.size());
@@ -51,19 +62,27 @@ public class HomeWork {
 
         EntityClassMetaData<Manager> entityClassMetaDataManager = new EntityClassMetaDataImpl<>(Manager.class);
         EntitySQLMetaData entitySQLMetaDataManager = new EntitySQLMetaDataImpl(entityClassMetaDataManager);
-        var dataTemplateManager = new DataTemplateJdbc<Manager>(dbExecutor, entitySQLMetaDataManager);
+        HwCache<Long, Manager> cacheManager = new MyCache<>();
+        var dataTemplateManager = new DataTemplateJdbc<Manager>(cacheManager, dbExecutor, entitySQLMetaDataManager);
 
         var dbServiceManager = new DbServiceManagerImpl(transactionRunner, dataTemplateManager);
         dbServiceManager.saveManager(new Manager("ManagerFirst"));
 
         var managerSecond = dbServiceManager.saveManager(new Manager("ManagerSecond"));
+        start = System.currentTimeMillis();
         var managerSecondSelected = dbServiceManager
                 .getManager(managerSecond.getNo())
                 .orElseThrow(() -> new RuntimeException("Manager not found, id:" + managerSecond.getNo()));
-        log.info("managerSecondSelected:{}", managerSecondSelected);
+        log.info("managerSecondSelected:{} for: {}", managerSecondSelected, System.currentTimeMillis() - start);
 
         List<Manager> managers = dbServiceManager.findAll();
         log.info("managers size :{}", managers.size());
+
+        start = System.currentTimeMillis();
+        var managerSecondSelected2 = dbServiceManager
+                .getManager(managerSecond.getNo())
+                .orElseThrow(() -> new RuntimeException("Manager not found, id:" + managerSecond.getNo()));
+        log.info("managerSecondSelected:{} for: {}", managerSecondSelected2, System.currentTimeMillis() - start);
     }
 
     private static void flywayMigrations(DataSource dataSource) {
