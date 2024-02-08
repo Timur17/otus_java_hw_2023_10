@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import ru.otus.cachehw.HwCache;
 import ru.otus.core.repository.DataTemplate;
 import ru.otus.core.repository.DataTemplateException;
 import ru.otus.core.repository.executor.DbExecutor;
@@ -23,21 +24,28 @@ public class DataTemplateJdbc<T> implements DataTemplate<T> {
     private EntityClassMetaDataImpl<T> entityClassMetaData;
     private final DbExecutor dbExecutor;
     private final EntitySQLMetaData entitySQLMetaData;
+    private final HwCache<Long, T> cache;
 
-    public DataTemplateJdbc(DbExecutor dbExecutor, EntitySQLMetaData entitySQLMetaData) {
+    public DataTemplateJdbc(HwCache<Long, T> cache, DbExecutor dbExecutor, EntitySQLMetaData entitySQLMetaData) {
         this.dbExecutor = dbExecutor;
         this.entitySQLMetaData = entitySQLMetaData;
+        this.cache = cache;
     }
 
     @Override
     public Optional<T> findById(Connection connection, long id) {
+        T clientFromCache = cache.get(id);
+        if (clientFromCache != null) {
+            return Optional.of(clientFromCache);
+        }
         return dbExecutor.executeSelect(connection, entitySQLMetaData.getSelectByIdSql(), List.of(id), rs -> {
             try {
                 if (rs.next()) {
                     EntityClassMetaData<T> metaData = getObjMetaData();
                     Constructor<T> constructor = metaData.getConstructor();
                     T obj = constructor.newInstance();
-                    setObjFields(metaData, obj, rs);
+                    setObjFieldsAndGetId(metaData, obj, rs);
+                    cache.put(id, obj);
                     return obj;
                 }
                 return null;
@@ -58,8 +66,11 @@ public class DataTemplateJdbc<T> implements DataTemplate<T> {
                             EntityClassMetaData<T> metaData = getObjMetaData();
                             Constructor<T> constructor = metaData.getConstructor();
                             T obj = constructor.newInstance();
-                            setObjFields(metaData, obj, rs);
+                            long id = setObjFieldsAndGetId(metaData, obj, rs);
                             clients.add(obj);
+                            if (cache.get(id) == null) {
+                                cache.put(id, obj);
+                            }
                         }
                         return clients;
                     } catch (SQLException
@@ -114,9 +125,10 @@ public class DataTemplateJdbc<T> implements DataTemplate<T> {
         } else return entityClassMetaData;
     }
 
-    private void setObjFields(EntityClassMetaData<T> metaData, T obj, ResultSet rs) {
+    private long setObjFieldsAndGetId(EntityClassMetaData<T> metaData, T obj, ResultSet rs) {
         List<Field> fields = metaData.getAllFields();
         Object value;
+        long id = 0;
         for (Field field : fields) {
             String fieldName = field.getName();
             try {
@@ -132,9 +144,13 @@ public class DataTemplateJdbc<T> implements DataTemplate<T> {
                     throw new DataTemplateException("Unknown class type");
                 }
                 objField.set(obj, value);
+                if (objField.getDeclaredAnnotation(Id.class) != null) {
+                    id = (long) value;
+                }
             } catch (NoSuchFieldException | SQLException | IllegalAccessException e) {
                 throw new DataTemplateException(e);
             }
         }
+        return id;
     }
 }
