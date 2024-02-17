@@ -55,15 +55,20 @@ public class Client implements Cloneable {
     @Override
     @SuppressWarnings({"java:S2975", "java:S1182"})
     public Client clone() {
-        this.phones.size();
-        return this;
+        List<Phone> copyPhones = new ArrayList<>();
+        for (Phone phone : this.getPhones()) {
+            copyPhones.add(phone.clone());
+        }
+        Address copeAddress = null;
+        if (this.addresses != null) {
+            copeAddress = new Address(this.addresses);
+        }
+        return new Client(this.id, this.name, copeAddress, copyPhones);
     }
 
     private void setClientsToPhone(List<Phone> phones) {
         if (phones != null) {
-            phones.forEach(phone -> {
-                phone.setClient(this);
-            });
+            phones.forEach(phone -> phone.setClient(this));
         }
     }
 

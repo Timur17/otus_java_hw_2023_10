@@ -27,4 +27,10 @@ public class Address {
         this.id = id;
         this.street = street;
     }
+
+    public Address(Address address) {
+        this.id = address.id;
+        this.street = address.street;
+        this.client = address.client;
+    }
 }
