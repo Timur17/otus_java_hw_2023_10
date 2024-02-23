@@ -1,4 +1,7 @@
 dependencies {
+    implementation(project(":hw22-jpql"))
+    implementation ("org.projectlombok:lombok")
+    annotationProcessor ("org.projectlombok:lombok")
     implementation("ch.qos.logback:logback-classic")
     implementation("com.google.code.gson:gson")
 
@@ -10,6 +13,10 @@ dependencies {
     implementation("org.eclipse.jetty:jetty-io")
     implementation("org.eclipse.jetty:jetty-util")
     implementation("org.freemarker:freemarker")
+
+    implementation("org.hibernate.orm:hibernate-core")
+    implementation("org.flywaydb:flyway-core")
+    implementation("org.postgresql:postgresql")
 
     testImplementation("org.junit.jupiter:junit-jupiter-engine")
     testImplementation("org.junit.jupiter:junit-jupiter-params")

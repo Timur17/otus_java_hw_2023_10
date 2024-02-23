@@ -5,31 +5,32 @@ import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import ru.otus.dao.UserDao;
-import ru.otus.model.User;
+import ru.otus.crm.service.DBServiceClient;
 
 import java.io.IOException;
+import java.util.stream.Collectors;
 
-@SuppressWarnings({"squid:S1948"})
-public class UsersApiServlet extends HttpServlet {
-
+public class ClientApiServlet extends HttpServlet {
     private static final int ID_PATH_PARAM_POSITION = 1;
 
-    private final UserDao userDao;
+    private final DBServiceClient dbServiceClient;
     private final Gson gson;
 
-    public UsersApiServlet(UserDao userDao, Gson gson) {
-        this.userDao = userDao;
+    public ClientApiServlet(DBServiceClient dbServiceClient, Gson gson) {
+        this.dbServiceClient = dbServiceClient;
         this.gson = gson;
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        User user = userDao.findById(extractIdFromRequest(request)).orElse(null);
-
-        response.setContentType("application/json;charset=UTF-8");
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        int g = 7 + 6;
+        String value = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
+        int k = 9;
+        extractIdFromRequest(request);
+        HttpServletRequest temp = request;
+        response.setContentType("text/html");
         ServletOutputStream out = response.getOutputStream();
-        out.print(gson.toJson(user));
+        out.print("Successfully");
     }
 
     private long extractIdFromRequest(HttpServletRequest request) throws IOException {
