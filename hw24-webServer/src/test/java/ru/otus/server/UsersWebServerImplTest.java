@@ -17,6 +17,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import ru.otus.config.DbServiceClientConfiguration;
 import ru.otus.dao.UserDao;
 import ru.otus.model.User;
 import ru.otus.services.TemplateProcessor;
@@ -46,7 +47,9 @@ class UsersWebServerImplTest {
         given(userDao.findById(DEFAULT_USER_ID)).willReturn(Optional.of(DEFAULT_USER));
 
         gson = new GsonBuilder().serializeNulls().create();
-        webServer = new UsersWebServerSimple(WEB_SERVER_PORT, userDao, gson, templateProcessor);
+        var dbServiceClient = new DbServiceClientConfiguration().configure();
+        webServer = new UsersWebServerSimple(WEB_SERVER_PORT, userDao,
+                gson, templateProcessor, dbServiceClient);
         webServer.start();
     }
 
