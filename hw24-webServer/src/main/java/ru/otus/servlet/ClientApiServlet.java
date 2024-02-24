@@ -11,8 +11,8 @@ import ru.otus.crm.model.Client;
 import ru.otus.crm.service.DBServiceClient;
 import ru.otus.dto.ClientDto;
 
+@SuppressWarnings("java:S1948")
 public class ClientApiServlet extends HttpServlet {
-
     private final DBServiceClient dbServiceClient;
     private final Gson gson;
 

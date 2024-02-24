@@ -11,8 +11,8 @@ import ru.otus.crm.model.Client;
 import ru.otus.crm.service.DBServiceClient;
 import ru.otus.services.TemplateProcessor;
 
+@SuppressWarnings("java:S1948")
 public class ClientServlet extends HttpServlet {
-
     private static final String USERS_PAGE_TEMPLATE = "clients.html";
     private static final String TEMPLATE_ATTR_RANDOM_USER = "clients";
 
