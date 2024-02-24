@@ -1,11 +1,9 @@
 package ru.otus.server;
 
 import com.google.gson.Gson;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
 import org.eclipse.jetty.ee10.servlet.security.ConstraintMapping;
 import org.eclipse.jetty.ee10.servlet.security.ConstraintSecurityHandler;
@@ -24,8 +22,12 @@ public class UsersWebServerWithBasicSecurity extends UsersWebServerSimple {
     private final LoginService loginService;
 
     public UsersWebServerWithBasicSecurity(
-            int port, LoginService loginService, UserDao userDao, Gson gson,
-            TemplateProcessor templateProcessor, DBServiceClient dbServiceClient) {
+            int port,
+            LoginService loginService,
+            UserDao userDao,
+            Gson gson,
+            TemplateProcessor templateProcessor,
+            DBServiceClient dbServiceClient) {
         super(port, userDao, gson, templateProcessor, dbServiceClient);
         this.loginService = loginService;
     }

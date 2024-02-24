@@ -5,12 +5,11 @@ import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.stream.Collectors;
 import ru.otus.crm.model.Client;
 import ru.otus.crm.service.DBServiceClient;
 import ru.otus.dto.ClientDto;
-
-import java.io.IOException;
-import java.util.stream.Collectors;
 
 public class ClientApiServlet extends HttpServlet {
 

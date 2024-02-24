@@ -5,10 +5,9 @@ import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import ru.otus.dao.UserDao;
 import ru.otus.model.User;
-
-import java.io.IOException;
 
 @SuppressWarnings({"squid:S1948"})
 public class UsersApiServlet extends HttpServlet {
@@ -32,7 +31,7 @@ public class UsersApiServlet extends HttpServlet {
         out.print(gson.toJson(user));
     }
 
-    private long extractIdFromRequest(HttpServletRequest request) throws IOException {
+    private long extractIdFromRequest(HttpServletRequest request) {
         String[] path = request.getPathInfo().split("/");
         String id = (path.length > 1) ? path[ID_PATH_PARAM_POSITION] : String.valueOf(-1);
         return Long.parseLong(id);

@@ -25,8 +25,12 @@ public class UsersWebServerSimple implements UsersWebServer {
     private final Server server;
     private final DBServiceClient dbServiceClient;
 
-    public UsersWebServerSimple(int port, UserDao userDao, Gson gson,
-                                TemplateProcessor templateProcessor, DBServiceClient dbServiceClient) {
+    public UsersWebServerSimple(
+            int port,
+            UserDao userDao,
+            Gson gson,
+            TemplateProcessor templateProcessor,
+            DBServiceClient dbServiceClient) {
         this.userDao = userDao;
         this.gson = gson;
         this.templateProcessor = templateProcessor;
@@ -59,8 +63,7 @@ public class UsersWebServerSimple implements UsersWebServer {
 
         Handler.Sequence sequence = new Handler.Sequence();
         sequence.addHandler(resourceHandler);
-        sequence.addHandler(applySecurity(servletContextHandler,
-                "/users", "/api/user/*", "/clients", "/client"));
+        sequence.addHandler(applySecurity(servletContextHandler, "/users", "/api/user/*", "/clients", "/client"));
 
         server.setHandler(sequence);
     }
@@ -83,7 +86,8 @@ public class UsersWebServerSimple implements UsersWebServer {
         ServletContextHandler servletContextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
         servletContextHandler.addServlet(new ServletHolder(new UsersServlet(templateProcessor, userDao)), "/users");
         servletContextHandler.addServlet(new ServletHolder(new UsersApiServlet(userDao, gson)), "/api/user/*");
-        servletContextHandler.addServlet(new ServletHolder(new ClientServlet(dbServiceClient, templateProcessor)), "/clients");
+        servletContextHandler.addServlet(
+                new ServletHolder(new ClientServlet(dbServiceClient, templateProcessor)), "/clients");
         servletContextHandler.addServlet(new ServletHolder(new ClientApiServlet(dbServiceClient, gson)), "/api/client");
         return servletContextHandler;
     }

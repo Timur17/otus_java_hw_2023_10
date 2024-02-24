@@ -40,9 +40,8 @@ public class WebServerWithBasicSecurity {
 
         LoginService loginService = new InMemoryLoginServiceImpl(userDao); // NOSONAR
 
-        UsersWebServer usersWebServer =
-                new UsersWebServerWithBasicSecurity(WEB_SERVER_PORT, loginService, userDao, gson,
-                        templateProcessor, dbServiceClient);
+        UsersWebServer usersWebServer = new UsersWebServerWithBasicSecurity(
+                WEB_SERVER_PORT, loginService, userDao, gson, templateProcessor, dbServiceClient);
 
         usersWebServer.start();
         usersWebServer.join();

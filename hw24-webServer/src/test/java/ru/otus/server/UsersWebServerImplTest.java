@@ -48,8 +48,7 @@ class UsersWebServerImplTest {
 
         gson = new GsonBuilder().serializeNulls().create();
         var dbServiceClient = new DbServiceClientConfiguration().configure();
-        webServer = new UsersWebServerSimple(WEB_SERVER_PORT, userDao,
-                gson, templateProcessor, dbServiceClient);
+        webServer = new UsersWebServerSimple(WEB_SERVER_PORT, userDao, gson, templateProcessor, dbServiceClient);
         webServer.start();
     }
 
