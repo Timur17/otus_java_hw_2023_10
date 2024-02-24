@@ -5,13 +5,14 @@ import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import ru.otus.crm.model.Client;
 import ru.otus.crm.service.DBServiceClient;
+import ru.otus.dto.ClientDto;
 
 import java.io.IOException;
 import java.util.stream.Collectors;
 
 public class ClientApiServlet extends HttpServlet {
-    private static final int ID_PATH_PARAM_POSITION = 1;
 
     private final DBServiceClient dbServiceClient;
     private final Gson gson;
@@ -23,19 +24,11 @@ public class ClientApiServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        int g = 7 + 6;
         String value = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
-        int k = 9;
-        extractIdFromRequest(request);
-        HttpServletRequest temp = request;
+        ClientDto clientDto = gson.fromJson(value, ClientDto.class);
+        Client clientDb = dbServiceClient.saveClient(clientDto.fromClientDtoToClient());
         response.setContentType("text/html");
         ServletOutputStream out = response.getOutputStream();
-        out.print("Successfully");
-    }
-
-    private long extractIdFromRequest(HttpServletRequest request) throws IOException {
-        String[] path = request.getPathInfo().split("/");
-        String id = (path.length > 1) ? path[ID_PATH_PARAM_POSITION] : String.valueOf(-1);
-        return Long.parseLong(id);
+        out.print("Client successfully added with id: " + clientDb.getId());
     }
 }
