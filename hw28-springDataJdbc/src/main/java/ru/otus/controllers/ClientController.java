@@ -13,13 +13,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Controller
-public class ClientRestController {
+public class ClientController {
 
     private final String osData;
     private final String applicationYmlMessage;
 //    private final ClientService clientService;
 
-    public ClientRestController(
+    public ClientController(
             @Value("${app.client-list-page.msg:Тут может находиться ваша реклама}") String applicationYmlMessage,
             @Value("OS: #{T(System).getProperty(\"os.name\")}, "
                     + "JDK: #{T(System).getProperty(\"java.runtime.version\")}")
