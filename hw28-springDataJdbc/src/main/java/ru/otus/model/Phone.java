@@ -1,37 +1,41 @@
 package ru.otus.model;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.Setter;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.PersistenceCreator;
+import org.springframework.data.relational.core.mapping.Table;
 
 import java.util.Objects;
 
 @Getter
 @Setter
-@NoArgsConstructor
+@Table("phone")
 public class Phone {
 
-    private Long id;
+    @Id
+    private final Long id;
+    @NonNull
+    private final String number;
+    @NonNull
+    private final String clientId;
 
-    private String number;
-
-    private Client client;
-
-    public Phone(Long id, String number) {
-        this.id = id;
-        this.number = number;
+    public Phone(String number, String clientId) {
+        this(null, number, clientId);
     }
 
-    public Phone(Long id, String number, Client client) {
+    @PersistenceCreator
+    public Phone(Long id, String number, String clientId) {
         this.id = id;
         this.number = number;
-        this.client = client;
+        this.clientId = clientId;
     }
 
     @Override
     @SuppressWarnings({"java:S2975", "java:S1182"})
     public Phone clone() {
-        return new Phone(this.id, this.number, this.client);
+        return new Phone(this.id, this.number, this.clientId);
     }
 
     @Override

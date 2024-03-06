@@ -93,7 +93,7 @@
     <tr th:each="client : ${clients}">
         <td th:text="${client.id}">1</td>
         <td th:text="${client.name}">John Doe</td>
-        <td th:text="${client.addresses.street}">default</td>
+        <td th:text="${client.address.street}">default</td>
         <td th:text="${client.phones}">default</td>
     </tr>
     </tbody>
