@@ -17,7 +17,7 @@ public class ClientDto {
         String[] phones = this.getPhones().split(",");
         return new Client(null,
                 this.getName(),
-                new Address(null, this.getAddress()),
-                Arrays.stream(phones).map(phone -> new Phone(null, phone)).toList());
+                new Address( this.getAddress(), null),
+                Arrays.stream(phones).map(phone -> new Phone(phone, null)).toList());
     }
 }
