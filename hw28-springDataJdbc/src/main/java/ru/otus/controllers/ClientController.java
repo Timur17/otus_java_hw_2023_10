@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.view.RedirectView;
+import ru.otus.dto.ClientDto;
 import ru.otus.model.Address;
 import ru.otus.model.Client;
 import org.springframework.web.bind.annotation.*;
@@ -31,14 +32,13 @@ public class ClientController {
 
     @GetMapping("/client/create")
     public String clientCreateView(Model model) {
-        Client client = new Client(1L, "test", new Address(1L, "address"),
-                List.of(new Phone(1l, "1231231231"), new Phone(2l, "22222222")));
-        model.addAttribute("client", client);
+        model.addAttribute("client", new ClientDto());
         return "clientCreate";
     }
 
     @PostMapping("/client/save")
-    public RedirectView clientSave(Client client) {
+    public RedirectView clientSave(ClientDto clientDto) {
+        System.out.println("::: " + clientDto);
         return new RedirectView("/", true);
     }
 
