@@ -1,8 +1,12 @@
 package ru.otus.model;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.Setter;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.PersistenceCreator;
+import org.springframework.data.relational.core.mapping.MappedCollection;
+import org.springframework.data.relational.core.mapping.Table;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,37 +14,35 @@ import java.util.Objects;
 
 @Getter
 @Setter
-@NoArgsConstructor
+@Table("client")
 public class Client implements Cloneable {
 
-    private Long id;
+    @Id
+    private final Long id;
 
-    private String name;
+    @NonNull
+    private final String name;
 
-    private List<Phone> phones;
+    @NonNull
+    @MappedCollection(idColumn = "client_id")
+    private final List<Phone> phones;
 
+    @NonNull
+    @MappedCollection(idColumn = "client_id")
+    private final Address address;
 
-    private Address addresses;
-
-    public Client(String name) {
-        this.id = null;
-        this.name = name;
-        this.phones = new ArrayList<>();
-    }
-
-    public Client(Long id, String name) {
-        this.id = id;
-        this.name = name;
-        this.phones = new ArrayList<>();
-    }
-
+    @PersistenceCreator
     public <E> Client(Long id, String name, Address address, List<Phone> phones) {
         this.id = id;
         this.name = name;
-        setClientToAddress(address);
-        this.addresses = address;
-        setClientsToPhone(phones);
+//        setClientToAddress(address);
+        this.address = address;
+//        setClientsToPhone(phones);
         this.phones = phones;
+    }
+
+    public Client(String name, Address address, List<Phone> phones) {
+        this(null, name, address, phones);
     }
 
     @Override
@@ -51,23 +53,12 @@ public class Client implements Cloneable {
             copyPhones.add(phone.clone());
         }
         Address copeAddress = null;
-        if (this.addresses != null) {
-            copeAddress = new Address(this.addresses);
+        if (this.address != null) {
+            copeAddress = new Address(this.address);
         }
         return new Client(this.id, this.name, copeAddress, copyPhones);
     }
 
-    private void setClientsToPhone(List<Phone> phones) {
-        if (phones != null) {
-            phones.forEach(phone -> phone.setClient(this));
-        }
-    }
-
-    private void setClientToAddress(Address address) {
-        if (address != null) {
-            address.setClient(this);
-        }
-    }
 
     @Override
     public String toString() {
@@ -84,11 +75,11 @@ public class Client implements Cloneable {
         return Objects.equals(id, client.id)
                 && Objects.equals(name, client.name)
                 && Objects.equals(phones, client.phones)
-                && Objects.equals(addresses, client.addresses);
+                && Objects.equals(address, client.address);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, phones, addresses);
+        return Objects.hash(id, name, phones, address);
     }
 }

@@ -1,28 +1,38 @@
 package ru.otus.model;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.Setter;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.PersistenceCreator;
+import org.springframework.data.relational.core.mapping.Table;
 
 @Getter
 @Setter
-@NoArgsConstructor
+@Table("address")
 public class Address {
 
-    private Long id;
+    @Id
+    private final Long id;
+    @NonNull
+    private final String street;
+    @NonNull
+    private final String clientId;
 
-    private String street;
-
-    private Client client;
-
-    public Address(Long id, String street) {
+    @PersistenceCreator
+    public Address(Long id, String street, String clientId) {
         this.id = id;
         this.street = street;
+        this.clientId = clientId;
+    }
+
+    public Address(String street, String clientId) {
+        this(null, street, clientId);
     }
 
     public Address(Address address) {
         this.id = address.id;
         this.street = address.street;
-        this.client = address.client;
+        this.clientId = address.clientId;
     }
 }
