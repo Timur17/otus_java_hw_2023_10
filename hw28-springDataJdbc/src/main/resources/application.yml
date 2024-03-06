@@ -1,0 +1,6 @@
+server:
+  port: 8080
+app:
+  client-list-page:
+    msg: Сегодня прекрасный день!!!
+    msg2: ${app.client-list-page.msg} Завтра будет еще лучше!
