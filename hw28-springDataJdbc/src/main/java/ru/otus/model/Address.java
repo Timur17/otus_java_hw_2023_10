@@ -14,8 +14,10 @@ public class Address {
 
     @Id
     private final Long id;
+
     @NonNull
     private final String street;
+
     @NonNull
     private final String clientId;
 

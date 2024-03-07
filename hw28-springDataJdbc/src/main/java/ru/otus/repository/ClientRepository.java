@@ -1,10 +1,9 @@
 package ru.otus.repository;
 
-import org.springframework.data.repository.ListCrudRepository;
-import ru.otus.model.Client;
-
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.repository.ListCrudRepository;
+import ru.otus.model.Client;
 
 public interface ClientRepository extends ListCrudRepository<Client, Long> {
 

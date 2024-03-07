@@ -14,6 +14,7 @@ public class Phone {
 
     @Id
     private final Long id;
+
     @NonNull
     private final String number;
 

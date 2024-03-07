@@ -1,9 +1,8 @@
 package ru.otus.services;
 
-import ru.otus.model.Client;
-
 import java.util.List;
 import java.util.Optional;
+import ru.otus.model.Client;
 
 public interface ClientService {
     List<Client> findAll();
