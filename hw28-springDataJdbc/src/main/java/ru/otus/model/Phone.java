@@ -32,12 +32,6 @@ public class Phone {
     }
 
     @Override
-    @SuppressWarnings({"java:S2975", "java:S1182"})
-    public Phone clone() {
-        return new Phone(this.id, this.number, this.clientId);
-    }
-
-    @Override
     public String toString() {
         return number;
     }
