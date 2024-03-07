@@ -31,10 +31,4 @@ public class Address {
     public Address(String street, String clientId) {
         this(null, street, clientId);
     }
-
-    public Address(Address address) {
-        this.id = address.id;
-        this.street = address.street;
-        this.clientId = address.clientId;
-    }
 }
