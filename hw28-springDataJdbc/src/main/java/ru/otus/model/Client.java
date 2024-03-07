@@ -12,7 +12,7 @@ import org.springframework.data.relational.core.mapping.Table;
 @Getter
 @Setter
 @Table("client")
-public class Client implements Cloneable {
+public class Client {
 
     @Id
     private final Long id;

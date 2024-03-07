@@ -14,10 +14,12 @@ public class ClientDto {
     String phones;
 
     public Client fromClientDtoToClient() {
-        String[] phones = this.getPhones().split(",");
+        String[] splitedPhones = this.getPhones().split(",");
         return new Client(
                 this.getName(),
                 new Address(this.getAddress(), null),
-                Arrays.stream(phones).map(phone -> new Phone(phone, null)).collect(Collectors.toSet()));
+                Arrays.stream(splitedPhones)
+                        .map(phone -> new Phone(phone, null))
+                        .collect(Collectors.toSet()));
     }
 }
