@@ -39,8 +39,7 @@ public class ClientController {
     @PostMapping("/client/save")
     public RedirectView clientSave(ClientDto clientDto) {
         Client client = clientDto.fromClientDtoToClient();
-        Optional<Client> clientDb = clientService.save(client);
-        System.out.println("::: " + clientDb.get());
+        clientService.save(client);
         return new RedirectView("/", true);
     }
 

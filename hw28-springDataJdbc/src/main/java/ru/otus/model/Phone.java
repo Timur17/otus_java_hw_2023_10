@@ -7,8 +7,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceCreator;
 import org.springframework.data.relational.core.mapping.Table;
 
-import java.util.Objects;
-
 @Getter
 @Setter
 @Table("phone")
@@ -18,7 +16,7 @@ public class Phone {
     private final Long id;
     @NonNull
     private final String number;
-    @NonNull
+
     private final String clientId;
 
     public Phone(String number, String clientId) {
@@ -40,19 +38,6 @@ public class Phone {
 
     @Override
     public String toString() {
-        return String.valueOf(number);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Phone phone = (Phone) o;
-        return Objects.equals(id, phone.id) && Objects.equals(number, phone.number);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, number);
+        return number;
     }
 }
