@@ -9,7 +9,7 @@ public interface ClientRepository extends ListCrudRepository<Client, Long> {
 
     List<Client> findAll();
 
-    Client save(Client client);
+    <S extends Client> S save(S client);
 
     Optional<Client> findById(long id);
 
