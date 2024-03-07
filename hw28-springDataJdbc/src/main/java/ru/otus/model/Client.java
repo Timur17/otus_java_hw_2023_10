@@ -27,7 +27,7 @@ public class Client {
     private final Address address;
 
     @PersistenceCreator
-    public <E> Client(Long id, String name, Address address, Set<Phone> phones) {
+    public Client(Long id, String name, Address address, Set<Phone> phones) {
         this.id = id;
         this.name = name;
         this.address = address;
