@@ -1,5 +1,6 @@
 package ru.otus.controllers;
 
+import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -9,9 +10,6 @@ import org.springframework.web.servlet.view.RedirectView;
 import ru.otus.dto.ClientDto;
 import ru.otus.model.Client;
 import ru.otus.services.ClientService;
-
-import java.util.List;
-import java.util.Optional;
 
 @Controller
 public class ClientController {
@@ -23,8 +21,9 @@ public class ClientController {
     public ClientController(
             @Value("${app.client-list-page.msg:Тут может находиться ваша реклама}") String applicationYmlMessage,
             @Value("OS: #{T(System).getProperty(\"os.name\")}, "
-                    + "JDK: #{T(System).getProperty(\"java.runtime.version\")}")
-            String osData, ClientService clientService) {
+                            + "JDK: #{T(System).getProperty(\"java.runtime.version\")}")
+                    String osData,
+            ClientService clientService) {
         this.applicationYmlMessage = applicationYmlMessage;
         this.osData = osData;
         this.clientService = clientService;

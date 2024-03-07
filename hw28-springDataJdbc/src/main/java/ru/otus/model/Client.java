@@ -1,5 +1,6 @@
 package ru.otus.model;
 
+import java.util.Set;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -7,8 +8,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.PersistenceCreator;
 import org.springframework.data.relational.core.mapping.MappedCollection;
 import org.springframework.data.relational.core.mapping.Table;
-
-import java.util.Set;
 
 @Getter
 @Setter
@@ -41,11 +40,6 @@ public class Client implements Cloneable {
 
     @Override
     public String toString() {
-        return "Client{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", phones=" + phones +
-                ", address=" + address +
-                '}';
+        return "Client{" + "id=" + id + ", name='" + name + '\'' + ", phones=" + phones + ", address=" + address + '}';
     }
 }
