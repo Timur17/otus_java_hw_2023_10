@@ -7,19 +7,10 @@ import ru.otus.model.Counter;
 public class ThreadServiceImpl implements ThreadService {
 
     private static final Logger logger = LoggerFactory.getLogger(ThreadServiceImpl.class);
-    private boolean isFirstThreadOrder = true;
-
-    private final Counter counterFirst;
-    private final Counter conterSecond;
-
-    public ThreadServiceImpl(Counter counterFirst, Counter counterSecond) {
-        this.counterFirst = counterFirst;
-        this.conterSecond = counterSecond;
-    }
 
     @Override
-    public synchronized void actionFirstTread() {
-        while (!isFirstThreadOrder) {
+    public synchronized void action(Counter counter, Counter counterAnother) {
+        while (!counter.isOrder()) {
             try {
                 this.wait();
             } catch (InterruptedException e) {
@@ -27,25 +18,10 @@ public class ThreadServiceImpl implements ThreadService {
                 Thread.currentThread().interrupt();
             }
         }
-        isFirstThreadOrder = false;
-        counterFirst.executeLogic();
-        logger.info("Count: {}", counterFirst.getValue());
-        this.notifyAll();
-    }
-
-    @Override
-    public synchronized void actionSecondTread() {
-        while (isFirstThreadOrder) {
-            try {
-                this.wait();
-            } catch (InterruptedException e) {
-                logger.warn("Error:", e);
-                Thread.currentThread().interrupt();
-            }
-        }
-        isFirstThreadOrder = true;
-        conterSecond.executeLogic();
-        logger.info("Count: {}", conterSecond.getValue());
+        counter.changeOrder();
+        counterAnother.changeOrder();
+        counter.executeLogic();
+        logger.info("Count: {}", counter.getValue());
         this.notifyAll();
     }
 }

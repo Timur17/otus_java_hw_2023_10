@@ -6,6 +6,11 @@ import lombok.Data;
 public class Counter {
     private boolean reverse = false;
     private int value = 0;
+    private boolean order;
+
+    public Counter(boolean order) {
+        this.order = order;
+    }
 
     public void executeLogic() {
         if (!reverse) {
@@ -19,5 +24,9 @@ public class Counter {
                 reverse = false;
             }
         }
+    }
+
+    public void changeOrder() {
+        order = !order;
     }
 }

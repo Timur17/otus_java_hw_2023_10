@@ -1,7 +1,7 @@
 package ru.otus.services;
 
-public interface ThreadService {
-    void actionFirstTread();
+import ru.otus.model.Counter;
 
-    void actionSecondTread();
+public interface ThreadService {
+    void action(Counter counter, Counter counterAnother);
 }

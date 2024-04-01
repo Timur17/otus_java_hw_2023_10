@@ -17,11 +17,12 @@ public class Main {
 
         long timeoutForLoop = 500;
         long shutdownTimeout = 12;
-        ThreadService threadService = new ThreadServiceImpl(new Counter(), new Counter());
-
+        ThreadService threadService = new ThreadServiceImpl();
+        Counter firstCounter = new Counter(true);
+        Counter secondCounter = new Counter(false);
         var executor = Executors.newFixedThreadPool(2);
-        executor.submit(new FirstThread(threadService, timeoutForLoop, "FIRST"));
-        executor.submit(new SecondThread(threadService, timeoutForLoop, "SECOND"));
+        executor.submit(new FirstThread(threadService, timeoutForLoop, "FIRST", firstCounter, secondCounter));
+        executor.submit(new SecondThread(threadService, timeoutForLoop, "SECOND", secondCounter, firstCounter));
 
         try {
             if (!executor.awaitTermination(shutdownTimeout, TimeUnit.SECONDS)) {

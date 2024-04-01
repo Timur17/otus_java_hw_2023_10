@@ -2,6 +2,7 @@ package ru.otus.threads;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.otus.model.Counter;
 import ru.otus.services.ThreadService;
 
 public class FirstThread implements Runnable {
@@ -12,17 +13,24 @@ public class FirstThread implements Runnable {
 
     private final long timeout;
 
-    public FirstThread(ThreadService threadService, long timeout, String threadName) {
+    private final Counter counter;
+
+    private final Counter counterAnother;
+
+    public FirstThread(
+            ThreadService threadService, long timeout, String threadName, Counter counter, Counter counterAnother) {
         this.threadService = threadService;
         this.threadName = threadName;
         this.timeout = timeout;
+        this.counter = counter;
+        this.counterAnother = counterAnother;
     }
 
     @Override
     public void run() {
         Thread.currentThread().setName(threadName);
         while (!Thread.currentThread().isInterrupted()) {
-            threadService.actionFirstTread();
+            threadService.action(counter, counterAnother);
             try {
                 Thread.sleep(timeout);
             } catch (InterruptedException e) {
