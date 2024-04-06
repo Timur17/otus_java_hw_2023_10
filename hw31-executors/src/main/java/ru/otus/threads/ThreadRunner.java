@@ -5,9 +5,9 @@ import org.slf4j.LoggerFactory;
 import ru.otus.model.Counter;
 import ru.otus.services.ThreadService;
 
-public class SecondThread implements Runnable {
+public class ThreadRunner implements Runnable {
 
-    private static final Logger logger = LoggerFactory.getLogger(SecondThread.class);
+    private static final Logger logger = LoggerFactory.getLogger(ThreadRunner.class);
     private final ThreadService threadService;
     private final String threadName;
 
@@ -17,7 +17,7 @@ public class SecondThread implements Runnable {
 
     private final Counter counterAnother;
 
-    public SecondThread(
+    public ThreadRunner(
             ThreadService threadService, long timeout, String threadName, Counter counter, Counter counterAnother) {
         this.threadService = threadService;
         this.threadName = threadName;
