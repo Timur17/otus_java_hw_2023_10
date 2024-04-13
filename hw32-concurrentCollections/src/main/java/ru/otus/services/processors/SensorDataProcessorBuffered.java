@@ -1,16 +1,18 @@
 package ru.otus.services.processors;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.concurrent.PriorityBlockingQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.otus.api.SensorDataProcessor;
 import ru.otus.api.model.SensorData;
 import ru.otus.lib.SensorDataBufferedWriter;
 
-// Этот класс нужно реализовать
-@SuppressWarnings({"java:S1068", "java:S125"})
 public class SensorDataProcessorBuffered implements SensorDataProcessor {
     private static final Logger log = LoggerFactory.getLogger(SensorDataProcessorBuffered.class);
-
+    private final PriorityBlockingQueue<SensorData> dataBuffer =
+            new PriorityBlockingQueue<>(500, Comparator.comparing(SensorData::getMeasurementTime));
     private final int bufferSize;
     private final SensorDataBufferedWriter writer;
 
@@ -21,16 +23,19 @@ public class SensorDataProcessorBuffered implements SensorDataProcessor {
 
     @Override
     public void process(SensorData data) {
-        /*
-            if (dataBuffer.size() >= bufferSize) {
-                flush();
-            }
-        */
+        dataBuffer.add(data);
+        if (dataBuffer.size() >= bufferSize) {
+            flush();
+        }
     }
 
     public void flush() {
         try {
-            // writer.writeBufferedData(bufferedData);
+            ArrayList<SensorData> list = new ArrayList<>();
+            dataBuffer.drainTo(list);
+            if (!list.isEmpty()) {
+                writer.writeBufferedData(list);
+            }
         } catch (Exception e) {
             log.error("Ошибка в процессе записи буфера", e);
         }
