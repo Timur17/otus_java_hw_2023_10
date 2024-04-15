@@ -14,14 +14,15 @@ public class Counter {
         this.generatedValue = generatedValue;
     }
 
-    public void compute() {
+    public void compute() throws InterruptedException {
         for (int i = 0; i < 50; i++) {
             currentValue = currentValue + generatedValue.getAndSet(0) + 1;
             log.info("currentValue: '{}'", currentValue);
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                log.error("Error occurred: ", e);
+                Thread.currentThread().interrupt();
             }
         }
     }
