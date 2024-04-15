@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package ru.otus.protobuf;
+
+option java_multiple_files = true;
+
+message ValueRange {
+    int64 firstValue  = 1;
+    int64 lastValue  = 2;
+}
+
+message GenValue {
+    int64 genValue  = 1;
+}
+
+service DigitService {
+    rpc generateDigits(ValueRange) returns (stream GenValue);
+}
